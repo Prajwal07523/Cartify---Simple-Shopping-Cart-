@@ -12,7 +12,6 @@ It provides an end-to-end shopping experience with authentication, product manag
 - Product listing and details  
 - Add/remove items from cart  
 - Order placement and checkout  
-- Profile management  
 - Responsive UI with clean design  
 
 ### ⚙️ Backend (Spring Boot)
@@ -21,7 +20,6 @@ It provides an end-to-end shopping experience with authentication, product manag
 - CRUD operations for users, products, and orders  
 - PostgreSQL database integration  
 - Layered architecture with DTOs and Services  
-- Exception handling and validation  
 
 ---
 
@@ -30,28 +28,12 @@ It provides an end-to-end shopping experience with authentication, product manag
 | Layer | Technology |
 |-------|-------------|
 | Frontend | Angular, TypeScript, HTML, SCSS |
-| Backend | Spring Boot, Java, JPA/Hibernate |
+| Backend | Spring Boot, Java, JPA |
 | Database | PostgreSQL |
 | API Communication | REST APIs |
 | Build Tools | Maven, Angular CLI |
 | Version Control | Git + GitHub |
 
----
-
-## 🏗️ Project Structure
-Cartify--Simple-Shopping-Cart/
-│
-├── Shopping-Cart/ # 🧠 Backend (Spring Boot)
-│ ├── src/
-│ ├── pom.xml
-│ └── ...
-│
-├── cartify-frontend/ # 💻 Frontend (Angular)
-│ ├── src/
-│ ├── package.json
-│ └── ...
-│
-└── README.md
 
 
 ---
@@ -62,35 +44,53 @@ Cartify--Simple-Shopping-Cart/
 ```bash
 git clone https://github.com/Prajwal07523/Cartify--Simple-Shopping-Cart.git
 cd Cartify--Simple-Shopping-Cart
-
+```
 
 
 ## 🔧 Backend Setup (Spring Boot)
 
 1. **Navigate to backend folder:**
+   ```bash
    cd Shopping-Cart
+   ```
  
+2.Create a Database name "cartify" in PostgreSQL
 
-2.Update PostgreSQL credentials in
+3.Update PostgreSQL credentials in
 src/main/resources/application.properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/cartifydb
+```bash
+spring.datasource.url=jdbc:postgresql://localhost:5432/cartify
 spring.datasource.username=your_username
 spring.datasource.password=your_password
+```
 
 
-3.Build and run the application:
-4.Backend runs at:
+4.Build and run the application:
+
+5.Backend runs at:
 👉 http://localhost:8081
 
 ## Frontend Setup (Angular)
 1.Navigate to frontend folder:
-
+```bash
  cd ../cartify-frontend
 npm install
 ng serve
+```
 
 2.Frontend runs at:
 👉 http://localhost:4200
 
+## 🧱Design Choices & Assumptions
+- Used JWT Authentication for stateless security.
+- Implemented a layered architecture (Controller → Service → Repository).
+- Used DTOs for clean data transfer between layers.
+- Used PostgreSQL for persistent and reliable storage.
+- Cart and order management are user-specific.
 
+## 📷 Optional Enhancements (Future Scope)
+- Add payment gateway integration
+- Admin dashboard for analytics
+- Docker containerization for deployment
+- CI/CD pipeline setup
 
