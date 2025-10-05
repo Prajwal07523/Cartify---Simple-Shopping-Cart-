@@ -1,0 +1,103 @@
+<!-- Header/Navigation -->
+<header class="header">
+  <nav class="navbar">
+    <div class="container">
+      <!-- Logo -->
+      <div class="navbar-brand">
+        <a routerLink="/" class="logo">
+          <span class="logo-icon">🛒</span>
+          <span class="logo-text">Cartify</span>
+        </a>
+      </div>
+
+      <!-- Navigation Links -->
+      <ul class="nav-links">
+        <li>
+          <a routerLink="/products" 
+             routerLinkActive="active"
+             class="nav-link">
+            Products
+          </a>
+        </li>
+        
+        <li *ngIf="isLoggedIn">
+          <a routerLink="/profile" 
+             routerLinkActive="active"
+             class="nav-link">
+            Profile
+          </a>
+        </li>
+
+         <li *ngIf="isLoggedIn">
+  <a routerLink="/place-order/my-orders" 
+     routerLinkActive="active"
+     class="nav-link">
+    My Orders
+  </a>
+</li>
+
+      </ul>
+
+      <!-- Right Side Actions -->
+      <div class="navbar-actions">
+        <!-- Cart Icon -->
+        <a routerLink="/cart" class="cart-icon" *ngIf="isLoggedIn">
+          <span class="icon">Cart🛒</span>
+          <span class="badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </a>
+
+        <!-- Auth Buttons -->
+        <div class="auth-buttons" *ngIf="!isLoggedIn">
+          <a routerLink="/auth/login" class="btn btn-outline">Login</a>
+          <a routerLink="/auth/signup" class="btn btn-primary">Sign Up</a>
+        </div>
+
+        <!-- User Menu -->
+        <div class="user-menu" *ngIf="isLoggedIn">
+          <button class="btn btn-outline" (click)="onLogout()">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- Main Content Area -->
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Cartify</h3>
+        <p>Your one-stop shopping destination</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a routerLink="/products">Products</a></li>
+          <li><a routerLink="/cart" *ngIf="isLoggedIn">Cart</a></li>
+          <li><a routerLink="/profile" *ngIf="isLoggedIn">Profile</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2024 Cartify. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

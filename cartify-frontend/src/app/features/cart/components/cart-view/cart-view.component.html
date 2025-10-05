@@ -1,0 +1,209 @@
+<div class="cart-container">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="cart-header">
+      <div class="header-content">
+        <h1 class="cart-title">
+          <span class="cart-icon">🛒</span>
+          Shopping Cart
+        </h1>
+        <p class="cart-subtitle" *ngIf="!isEmpty">{{ totalItems }} {{ totalItems === 1 ? 'item' : 'items' }} in your cart</p>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading your cart...</p>
+    </div>
+
+    <!-- Empty Cart -->
+    <div *ngIf="!loading && isEmpty" class="empty-cart">
+      <div class="empty-icon">🛒</div>
+      <h2 class="empty-title">Your cart is empty</h2>
+      <p class="empty-text">Add some products to get started!</p>
+      <button class="btn-continue-shopping" (click)="continueShopping()">
+        <span class="btn-icon">🛍️</span>
+        Start Shopping
+      </button>
+    </div>
+
+    <!-- Cart Content -->
+    <div *ngIf="!loading && !isEmpty" class="cart-content">
+
+      <!-- Cart Items Section -->
+      <div class="cart-items-section">
+        <div class="section-header">
+          <h2 class="section-title">Cart Items</h2>
+          <button class="btn-clear-cart" (click)="clearCart()">
+            <span class="clear-icon">🗑️</span>
+            Clear Cart
+          </button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div class="cart-items-list">
+          <div 
+            *ngFor="let item of cartItems; trackBy: trackByItemId" 
+            class="cart-item"
+            [class.removing]="isItemRemoving(item.productId)"
+          >
+            <!-- Product Image (placeholder) -->
+            <div class="item-image" (click)="router.navigate(['/products', item.productId])">
+              <img 
+                src="assets/images/placeholder-product.png" 
+                alt="{{ item.name }}"
+                onerror="this.src='assets/images/placeholder-product.png'"
+              />
+            </div>
+
+            <!-- Product Details -->
+            <div class="item-details">
+              <h3 class="item-name" (click)="router.navigate(['/products', item.productId])">
+                {{ item.name }}
+              </h3>
+              <!-- Description not available in API, can remove or add placeholder -->
+              <!--<p class="item-description">{{ item.description || 'No description available' }}</p>-->
+            </div>
+
+            <!-- Quantity Controls -->
+            <div class="item-quantity">
+              <label class="quantity-label">Quantity</label>
+              <div class="quantity-controls">
+                <button 
+                  class="quantity-btn"
+                  (click)="decreaseQuantity(item)"
+                  [disabled]="updating"
+                >
+                  −
+                </button>
+                <input 
+                  type="number" 
+                  class="quantity-input"
+                  [value]="item.quantity"
+                  (change)="updateQuantityInput(item, $event)"
+                  [disabled]="updating"
+                  min="1"
+                />
+                <button 
+                  class="quantity-btn"
+                  (click)="increaseQuantity(item)"
+                  [disabled]="updating"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div class="item-price">
+              <div class="price-label">Price</div>
+              <div class="price-value">{{ formatPrice(item.price) }}</div>
+            </div>
+
+            <!-- Total -->
+            <div class="item-total">
+              <div class="total-label">Total</div>
+              <div class="total-value">{{ formatPrice(getItemTotal(item)) }}</div>
+            </div>
+
+            <!-- Remove Button -->
+            <button class="btn-remove" (click)="removeItem(item)" title="Remove item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Continue Shopping Button -->
+        <button class="btn-continue" (click)="continueShopping()">
+          ← Continue Shopping
+        </button>
+      </div>
+
+      <!-- Order Summary Section -->
+      <div class="order-summary-section">
+        <div class="summary-card">
+          <h2 class="summary-title">Order Summary</h2>
+
+          <!-- Summary Items -->
+          <div class="summary-items">
+            <div class="summary-item">
+              <span class="summary-label">Subtotal ({{ totalItems }} items)</span>
+              <span class="summary-value">{{ formatPrice(getSubtotal()) }}</span>
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Shipping</span>
+              <span class="summary-value" [class.free]="getShippingCost() === 0">
+                {{ getShippingCost() === 0 ? 'FREE' : formatPrice(getShippingCost()) }}
+              </span>
+            </div>
+
+            <div class="summary-item" *ngIf="getShippingCost() > 0">
+              <span class="shipping-info">
+                💡 Add {{ formatPrice(500 - getSubtotal()) }} more for FREE shipping
+              </span>
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Tax (5%)</span>
+              <span class="summary-value">{{ formatPrice(getTax()) }}</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-item total">
+              <span class="summary-label">Total</span>
+              <span class="summary-value">{{ formatPrice(getTotal()) }}</span>
+            </div>
+
+            <div class="summary-savings" *ngIf="getSavings() > 0">
+              <span class="savings-icon">🎉</span>
+              You're saving {{ formatPrice(getSavings()) }} on this order!
+            </div>
+          </div>
+
+          <!-- Checkout Button -->
+          <button class="btn-checkout" (click)="proceedToCheckout()">
+            <span class="btn-icon">⚡</span>
+            Proceed to Checkout
+          </button>
+
+          <!-- Security Badge -->
+          <div class="security-badge">
+            <span class="security-icon">🔒</span>
+            <span class="security-text">Secure Checkout</span>
+          </div>
+
+          <!-- Accepted Payments -->
+          <div class="accepted-payments">
+            <p class="payments-title">We Accept</p>
+            <div class="payment-methods">
+              <span class="payment-icon">💳</span>
+              <span class="payment-icon">🏦</span>
+              <span class="payment-icon">📱</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Promo Section -->
+        <div class="promo-section">
+          <div class="promo-icon">🎁</div>
+          <div class="promo-content">
+            <h3 class="promo-title">Have a promo code?</h3>
+            <p class="promo-text">Apply it at checkout</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

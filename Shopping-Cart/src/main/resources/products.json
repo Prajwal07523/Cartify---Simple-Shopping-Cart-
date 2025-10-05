@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Wireless Mouse",
+    "description": "Ergonomic wireless mouse with adjustable DPI",
+    "price": 799.00,
+    "stockQuantity": 50,
+    "imageUrl": "https://m.media-amazon.com/images/I/61LtuGzXeaL._SL1500_.jpg"
+  },
+  {
+    "name": "Mechanical Keyboard",
+    "description": "RGB backlit mechanical keyboard with blue switches",
+    "price": 2499.00,
+    "stockQuantity": 30,
+    "imageUrl": "https://m.media-amazon.com/images/I/71cngLX2xiL._SL1500_.jpg"
+  },
+  {
+    "name": "Noise Cancelling Headphones",
+    "description": "Over-ear headphones with active noise cancellation",
+    "price": 5999.00,
+    "stockQuantity": 20,
+    "imageUrl": "https://m.media-amazon.com/images/I/61CGHv6kmWL._SL1500_.jpg"
+  },
+  {
+    "name": "USB-C Hub",
+    "description": "7-in-1 USB-C hub with HDMI, USB 3.0, and card reader",
+    "price": 1299.00,
+    "stockQuantity": 40,
+    "imageUrl": "https://m.media-amazon.com/images/I/61tX1mRr5bL._SL1500_.jpg"
+  }
+]

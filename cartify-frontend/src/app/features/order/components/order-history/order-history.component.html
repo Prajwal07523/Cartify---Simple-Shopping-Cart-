@@ -1,0 +1,119 @@
+<div class="order-history-container">
+  <div class="container">
+
+    <!-- Header -->
+    <header class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">📦 My Orders</h1>
+        <p class="page-subtitle">Track and manage all your orders in one place</p>
+      </div>
+      <button class="btn-back" routerLink="/profile">
+        ← Back to Profile
+      </button>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-section">
+      <div class="spinner"></div>
+      <p>Loading your orders...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && errorMessage" class="error-section">
+      <div class="error-icon">⚠️</div>
+      <p class="error-text">{{ errorMessage }}</p>
+      <button class="btn-retry" (click)="loadOrders()">Try Again</button>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && !errorMessage && orders.length === 0" class="empty-section">
+      <div class="empty-icon">🛍️</div>
+      <h2 class="empty-title">No Orders Yet</h2>
+      <p class="empty-message">Looks like you haven't placed any orders yet.</p>
+      <button class="btn-shop" routerLink="/products">Start Shopping</button>
+    </div>
+
+    <div class="search-box" *ngIf="!loading && orders.length > 0" 
+     style="position: relative; width: 100%; max-width: 400px; margin: 20px auto 30px; display: flex; align-items: center; justify-content: center;">
+  
+  <input 
+    type="text" 
+    placeholder="Search orders by ID or product name..."
+    [(ngModel)]="searchTerm"
+    (input)="onSearch()"
+    style="width: 100%; padding: 12px 40px 12px 16px; font-size: 15px; border: 2px solid #e0e0e0; border-radius: 25px; outline: none; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05); background-color: #fff;"
+    onfocus="this.style.borderColor='#007bff'; this.style.boxShadow='0 0 6px rgba(0,123,255,0.3)';"
+    onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.05)';"
+  />
+
+  <span class="search-icon" style="position: absolute; right: 14px; font-size: 18px; color: #777; pointer-events: none;">
+    🔍
+  </span>
+</div>
+
+    <!-- Orders List -->
+    <div *ngIf="!loading && !errorMessage && filteredOrders.length > 0" class="orders-section">
+      <div class="order-card" *ngFor="let order of filteredOrders">
+
+        <!-- Order Header -->
+        <div class="order-header">
+          <div class="order-header-left">
+            <h3 class="order-id">Order #{{ order.orderId }}</h3>
+            <span class="order-date">{{ formatDate(order.orderDate) }}</span>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="order-items">
+          <div class="order-item" *ngFor="let item of order.items">
+            <div class="item-image">
+              <img 
+                [src]="'assets/images/products/' + item.productName.toLowerCase().replace(' ', '-') + '.jpg'" 
+                [alt]="item.productName"
+                onerror="this.src='assets/images/placeholder-product.png'" />
+            </div>
+            <div class="item-details">
+              <h4 class="item-name">{{ item.productName }}</h4>
+              <p class="item-quantity">Quantity: <strong>{{ item.quantity }}</strong></p>
+            </div>
+            <div class="item-price">
+              <span class="price-label">Price</span>
+              <span class="price-value">{{ formatPrice(item.price) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Footer -->
+        <div class="order-footer">
+          <div class="order-actions">
+            <button class="btn-view-details" (click)="viewOrderDetails(order)">
+              👁️ View Details
+            </button>
+            <button 
+              class="btn-reorder" 
+              *ngIf="order.status === 'DELIVERED'"
+              (click)="reorder(order)">
+              🔄 Reorder
+            </button>
+            <button 
+              class="btn-cancel" 
+              *ngIf="order.status === 'PENDING'"
+              (click)="cancelOrder(order)">
+              ❌ Cancel
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- No Results After Filter -->
+    <div *ngIf="!loading && !errorMessage && orders.length > 0 && filteredOrders.length === 0" class="no-results-section">
+      <div class="no-results-icon">🔍</div>
+      <h2 class="no-results-title">No Orders Found</h2>
+      <p class="no-results-message">Try adjusting your filters or search terms</p>
+      <button class="btn-clear-filters" (click)="clearFilters()">Clear Filters</button>
+    </div>
+
+  </div>
+</div>

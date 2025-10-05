@@ -1,0 +1,183 @@
+<!-- ==================== features/products/components/product-detail/product-detail.component.html ==================== -->
+
+<div class="product-detail-container">
+  <div class="container">
+
+    <!-- Back Button -->
+    <button class="back-btn" (click)="goBack()">
+      <span class="back-icon">←</span> Back to Products
+    </button>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading product details...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="error && !loading">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error }}</p>
+      <button class="btn-retry" (click)="loadProductDetails(product?.id || 0)">Retry</button>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-toast" [class.show]="showSuccessMessage">
+      <span class="success-icon">✓</span>
+      <span>Product added to cart!</span>
+    </div>
+
+    <!-- Product Details -->
+    <div class="product-detail-content" *ngIf="product && !loading">
+      
+      <!-- Left Side - Product Images -->
+      <div class="product-images-section">
+        <!-- Main Image -->
+        <div class="main-image">
+          <img 
+            [src]="productImages[selectedImage]" 
+            [alt]="product.name"
+            onerror="this.src='assets/images/placeholder-product.png'"
+          />
+          
+          <!-- Stock Badge on Image -->
+          <div class="stock-badge-image" [class.out-of-stock]="!isInStock()">
+            {{ getStockStatus() }}
+          </div>
+        </div>
+
+        <!-- Thumbnail Images -->
+        <div class="thumbnail-images" *ngIf="productImages.length > 1">
+          <div 
+            class="thumbnail"
+            *ngFor="let image of productImages; let i = index"
+            [class.active]="i === selectedImage"
+            (click)="selectImage(i)"
+          >
+            <img [src]="image" [alt]="product.name">
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side - Product Info -->
+      <div class="product-info-section">
+        
+        <!-- Product Title -->
+        <h1 class="product-title">{{ product.name }}</h1>
+
+        <!-- Product Price -->
+        <div class="price-section">
+          <span class="current-price">{{ formatPrice(product.price) }}</span>
+          <!-- Optional: Add discount price if you have it -->
+          <!-- <span class="original-price">₹999</span>
+          <span class="discount-badge">20% OFF</span> -->
+        </div>
+
+        <!-- Stock Status -->
+        <div class="stock-status">
+          <span class="status-indicator" [class.in-stock]="isInStock()" [class.out-of-stock]="!isInStock()">
+            {{ getStockStatus() }}
+          </span>
+        </div>
+
+        <!-- Product Description -->
+        <div class="product-description">
+          <h3>Description</h3>
+          <p>{{ product.description }}</p>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Quantity Selector -->
+        <div class="quantity-section" *ngIf="isInStock()">
+          <label class="quantity-label">Quantity:</label>
+          <div class="quantity-controls">
+            <button 
+              class="quantity-btn"
+              (click)="decreaseQuantity()"
+              [disabled]="quantity <= 1"
+            >
+              −
+            </button>
+            <input 
+              type="number" 
+              class="quantity-input"
+              [(ngModel)]="quantity"
+              (input)="onQuantityInput($event)"
+              min="1"
+              [max]="product.stockQuantity"
+            />
+            <button 
+              class="quantity-btn"
+              (click)="increaseQuantity()"
+              [disabled]="quantity >= product.stockQuantity"
+            >
+              +
+            </button>
+          </div>
+          <span class="available-stock">{{ product.stockQuantity }} available</span>
+        </div>
+
+        <!-- Total Price -->
+        <div class="total-price-section" *ngIf="isInStock()">
+          <span class="total-label">Total:</span>
+          <span class="total-amount">{{ formatPrice(totalPrice) }}</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button 
+            class="btn btn-add-cart"
+            [disabled]="!canAddToCart"
+            (click)="addToCart()"
+          >
+            <span class="btn-icon">🛒</span>
+            <span *ngIf="!isAddingToCart">Add to Cart</span>
+            <span *ngIf="isAddingToCart">Adding...</span>
+          </button>
+
+          <button 
+            class="btn btn-buy-now"
+            [disabled]="!isInStock()"
+            (click)="buyNow()"
+          >
+            <span class="btn-icon">⚡</span>
+            Buy Now
+          </button>
+        </div>
+
+        <!-- Out of Stock Message -->
+        <div class="out-of-stock-message" *ngIf="!isInStock()">
+          <span class="info-icon">ℹ️</span>
+          <p>This product is currently out of stock. Please check back later.</p>
+        </div>
+
+        <!-- Product Meta Information -->
+        <div class="product-meta">
+          <div class="meta-item">
+            <span class="meta-label">Product ID:</span>
+            <span class="meta-value">#{{ product.id }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Added on:</span>
+            <span class="meta-value">{{ product.createdAt | date: 'mediumDate' }}</span>
+          </div>
+        </div>
+
+        <!-- Additional Features -->
+        <div class="features-section">
+          <h3>Why Buy This?</h3>
+          <ul class="features-list">
+            <li><span class="feature-icon">✓</span> Fast Delivery</li>
+            <li><span class="feature-icon">✓</span> Easy Returns</li>
+            <li><span class="feature-icon">✓</span> Secure Payment</li>
+            <li><span class="feature-icon">✓</span> Quality Assured</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

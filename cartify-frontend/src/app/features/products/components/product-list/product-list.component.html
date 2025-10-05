@@ -1,0 +1,68 @@
+<div class="product-list-container">
+  <!-- Header Section -->
+  <div class="header">
+    <h1 class="title">Our Products</h1>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <div class="search-wrapper">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search for products..." 
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+      >
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p class="loading-text">Loading products...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <p class="error-text">{{ error }}</p>
+    <button class="retry-button" (click)="loadProducts()">Retry</button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && filteredProducts.length === 0" class="empty-container">
+    <p class="empty-text">No products found</p>
+    <p class="empty-subtext">Try adjusting your search</p>
+  </div>
+
+  <!-- Products Grid -->
+  <div *ngIf="!loading && !error && filteredProducts.length > 0" class="products-grid">
+    <div 
+      *ngFor="let product of filteredProducts; trackBy: trackByProductId" 
+      class="product-card"
+      [class.out-of-stock]="!isInStock(product)"
+      (click)="goToProductDetail(product.id)"
+    >
+      <!-- Product Image -->
+      <div class="product-image">
+        <img [src]="product.imageUrl || 'assets/images/placeholder-product.png'" alt="{{ product.name }}">
+        <div class="stock-badge" [class.in-stock]="isInStock(product)" [class.out-of-stock]="!isInStock(product)">
+          {{ getStockStatus(product) }}
+        </div>
+      </div>
+
+      <!-- Product Details -->
+      <div class="product-details">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
+        <div class="price">{{ formatPrice(product.price) }}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,227 @@
+<div class="place-order-container">
+  <div class="container">
+
+    <!-- Header -->
+    <header class="order-header">
+      <h1 class="order-title">🛒 Complete Your Order</h1>
+      <p class="order-subtitle">Just a few more steps to get your items delivered!</p>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-section">
+      <div class="spinner"></div>
+      <p>Processing your order...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && errorMessage" class="error-section">
+      <div class="error-icon">⚠️</div>
+      <p class="error-text">{{ errorMessage }}</p>
+      <button class="btn-retry" (click)="retry()">Try Again</button>
+    </div>
+
+    <!-- Order Form -->
+    <div *ngIf="!loading && orderResponse && !orderConfirmed" class="order-form-section">
+      
+      <!-- Step Indicator -->
+      <div class="steps-indicator">
+        <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+          <div class="step-number">1</div>
+          <div class="step-label">Order Review</div>
+        </div>
+        <div class="step-line" [class.active]="currentStep > 1"></div>
+        <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+          <div class="step-number">2</div>
+          <div class="step-label">Delivery</div>
+        </div>
+        <div class="step-line" [class.active]="currentStep > 2"></div>
+        <div class="step" [class.active]="currentStep === 3" [class.completed]="currentStep > 3">
+          <div class="step-number">3</div>
+          <div class="step-label">Payment</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Order Summary -->
+      <div *ngIf="currentStep === 1" class="step-content">
+        <div class="summary-card">
+          <h2 class="section-title">📦 Order Summary</h2>
+          
+          <div class="order-info-grid">
+            <div class="info-item">
+              <span class="info-label">Order ID</span>
+              <span class="info-value">#{{ orderResponse.orderId }}</span>
+            </div>
+            <div class="info-item" *ngIf="orderResponse.cartId">
+              <span class="info-label">Cart Reference</span>
+              <span class="info-value">#{{ orderResponse.cartId }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status</span>
+              <span class="info-value status-badge" [class.success]="orderResponse.status === 'SUCCESS'">
+                {{ orderResponse.status }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Product Details -->
+          <div *ngIf="orderResponse.product" class="product-card">
+            <img [src]="orderResponse.product.imageUrl || 'assets/images/placeholder-product.png'"
+                 [alt]="orderResponse.product.name"
+                 class="product-image" />
+            <div class="product-info">
+              <h3 class="product-name">{{ orderResponse.product.name }}</h3>
+              <p class="product-quantity">Quantity: <strong>{{ orderResponse.quantity }}</strong></p>
+              <p class="product-price">{{ formatPrice(orderResponse.product.price) }}</p>
+            </div>
+            <div class="product-total">
+              <span class="total-label">Total</span>
+              <span class="total-amount">{{ formatPrice(orderResponse.product.price * orderResponse.quantity) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-secondary" (click)="cancelOrder()">Cancel</button>
+          <button class="btn-primary" (click)="nextStep()">Continue to Delivery →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Delivery Address -->
+      <div *ngIf="currentStep === 2" class="step-content">
+        <div class="delivery-card">
+          <h2 class="section-title">📍 Delivery Address</h2>
+          
+          <form class="delivery-form">
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label for="fullName">Full Name *</label>
+                <input type="text" id="fullName" [(ngModel)]="deliveryAddress.fullName" 
+                       name="fullName" placeholder="Enter your full name" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label for="address">Address Line *</label>
+                <input type="text" id="address" [(ngModel)]="deliveryAddress.address" 
+                       name="address" placeholder="House No., Building Name" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group full-width">
+                <label for="landmark">Landmark</label>
+                <input type="text" id="landmark" [(ngModel)]="deliveryAddress.landmark" 
+                       name="landmark" placeholder="Near by landmark (optional)" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="city">City *</label>
+                <input type="text" id="city" [(ngModel)]="deliveryAddress.city" 
+                       name="city" placeholder="City" required />
+              </div>
+              <div class="form-group">
+                <label for="state">State *</label>
+                <input type="text" id="state" [(ngModel)]="deliveryAddress.state" 
+                       name="state" placeholder="State" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pincode">Pincode *</label>
+                <input type="text" id="pincode" [(ngModel)]="deliveryAddress.pincode" 
+                       name="pincode" placeholder="6-digit pincode" maxlength="6" required />
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="text" id="phone" [(ngModel)]="deliveryAddress.phone" 
+                       name="phone" placeholder="10-digit mobile" maxlength="10" required />
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-secondary" (click)="previousStep()">← Back</button>
+          <button class="btn-primary" (click)="nextStep()" [disabled]="!isDeliveryAddressValid()">
+            Continue to Payment →
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Payment Method -->
+      <div *ngIf="currentStep === 3" class="step-content">
+        <div class="payment-card">
+          <h2 class="section-title">💳 Payment Method</h2>
+          
+          <div class="payment-options">
+            <div class="payment-option" [class.selected]="paymentMethod === 'razorpay'" 
+                 (click)="selectPaymentMethod('razorpay')">
+              <div class="radio-btn">
+                <div class="radio-inner" *ngIf="paymentMethod === 'razorpay'"></div>
+              </div>
+              <div class="payment-info">
+                <h3>💳 Online Payment (Razorpay)</h3>
+                <p>Credit Card, Debit Card, UPI, Net Banking</p>
+                <span class="test-mode-badge">Test Mode</span>
+              </div>
+            </div>
+
+            <div class="payment-option" [class.selected]="paymentMethod === 'cod'" 
+                 (click)="selectPaymentMethod('cod')">
+              <div class="radio-btn">
+                <div class="radio-inner" *ngIf="paymentMethod === 'cod'"></div>
+              </div>
+              <div class="payment-info">
+                <h3>💵 Cash on Delivery</h3>
+                <p>Pay when your order is delivered</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Total -->
+          <div class="order-total-section" *ngIf="orderResponse.product">
+            <div class="total-row">
+              <span>Subtotal</span>
+              <span>{{ formatPrice(orderResponse.product.price * orderResponse.quantity) }}</span>
+            </div>
+            <div class="total-row">
+              <span>Delivery Charges</span>
+              <span class="free-delivery">FREE</span>
+            </div>
+            <div class="total-row grand-total">
+              <span>Total Amount</span>
+              <span>{{ formatPrice(orderResponse.product.price * orderResponse.quantity) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-secondary" (click)="previousStep()">← Back</button>
+          <button class="btn-primary btn-confirm" (click)="confirmOrder()" [disabled]="!paymentMethod">
+            <span *ngIf="paymentMethod === 'razorpay'">💳 Pay Now</span>
+            <span *ngIf="paymentMethod === 'cod'">✅ Place Order</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="orderConfirmed" class="confirmation-section">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">Order Placed Successfully! 🎉</h2>
+      <p class="success-message">Your order #{{ orderResponse.orderId }} has been confirmed.</p>
+      <p class="success-submessage">We'll send you a confirmation email shortly.</p>
+      
+      <div class="success-actions">
+        <button class="btn-primary" routerLink="/place-order/my-orders">📦 View My Orders</button>
+        <button class="btn-secondary" routerLink="/products">Continue Shopping</button>
+      </div>
+    </div>
+
+  </div>
+</div>
