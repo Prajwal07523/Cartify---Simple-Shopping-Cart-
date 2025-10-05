@@ -62,23 +62,21 @@ Cartify--Simple-Shopping-Cart/
 ```bash
 git clone https://github.com/Prajwal07523/Cartify--Simple-Shopping-Cart.git
 cd Cartify--Simple-Shopping-Cart
-```bash
+
 
 
 ## 🔧 Backend Setup (Spring Boot)
 
 1. **Navigate to backend folder:**
-   ```bash
    cd Shopping-Cart
-   ```bash
+ 
 
 2.Update PostgreSQL credentials in
 src/main/resources/application.properties
-```bash
 spring.datasource.url=jdbc:postgresql://localhost:5432/cartifydb
 spring.datasource.username=your_username
 spring.datasource.password=your_password
-```bash
+
 
 3.Build and run the application:
 4.Backend runs at:
@@ -86,11 +84,11 @@ spring.datasource.password=your_password
 
 ## Frontend Setup (Angular)
 1.Navigate to frontend folder:
-```bash
+
  cd ../cartify-frontend
 npm install
 ng serve
-```
+
 2.Frontend runs at:
 👉 http://localhost:4200
 
