@@ -4,16 +4,8 @@ FROM eclipse-temurin:17-jdk AS build
 # Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first (for better caching)
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-
-# Copy backend source code
-COPY src ./src
-
-# Copy frontend source code (React/Vue/Angular, etc.)
-COPY cartify-frontend ./cartify-frontend
+# Copy everything from Shopping-Cart folder
+COPY Shopping-Cart/ ./
 
 # Give execute permission to Maven wrapper (important for Linux)
 RUN chmod +x mvnw
