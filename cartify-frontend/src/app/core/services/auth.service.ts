@@ -18,7 +18,7 @@ export interface SignupResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8081/auth';
+  private apiUrl = 'https://cartify-simple-shopping-cart-1.onrender.com/auth';
   private tokenKey = 'authToken';
 
   // ✅ BehaviorSubject to track login state

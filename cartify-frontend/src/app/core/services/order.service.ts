@@ -5,7 +5,7 @@ import { OrderResponseDto } from 'src/app/models/order.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private baseUrl = 'http://localhost:8081/orders';
+  private baseUrl = 'https://cartify-simple-shopping-cart-1.onrender.com/orders';
 
   constructor(private http: HttpClient) {}
 

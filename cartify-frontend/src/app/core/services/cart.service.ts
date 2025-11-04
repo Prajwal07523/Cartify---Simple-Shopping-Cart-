@@ -25,7 +25,7 @@ export interface CartResponseDto {
 })
 export class CartService {
 
-  private baseUrl = 'http://localhost:8081/cart'; // Backend cart API
+  private baseUrl = 'https://cartify-simple-shopping-cart-1.onrender.com/cart'; // Backend cart API
 
   // Reactive cart state
   private cartSubject = new BehaviorSubject<CartResponseDto>({ items: [], totalPrice: 0 });
